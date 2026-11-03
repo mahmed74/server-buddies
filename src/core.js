@@ -5,15 +5,17 @@ const isBrowser = typeof window !== "undefined" && typeof document !== "undefine
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 export const SEASONS = ["auto", "none", "christmas", "halloween"];
-const SEASON_HATS = { christmas: "santahat", halloween: "witchhat" };
+const HALLOWEEN_HATS = ["witchhat", "pumpkin"];
 
-// Seasonal accessory for a date: Halloween (Oct 20-31) and Christmas (December). "auto" follows the date.
+// Seasonal accessory for a date: Halloween (Oct 20-31, witch hat and pumpkin on alternate days) and Christmas (December). "auto" follows the date.
 export function seasonAccessory(season = "auto", date = new Date()) {
   if (season === "none") return "none";
-  if (SEASON_HATS[season]) return SEASON_HATS[season];
+  const halloween = () => HALLOWEEN_HATS[date.getDate() % 2];
+  if (season === "christmas") return "santahat";
+  if (season === "halloween") return halloween();
   const m = date.getMonth();
-  if (m === 11) return SEASON_HATS.christmas;
-  if (m === 9 && date.getDate() >= 20) return SEASON_HATS.halloween;
+  if (m === 11) return "santahat";
+  if (m === 9 && date.getDate() >= 20) return halloween();
   return "none";
 }
 

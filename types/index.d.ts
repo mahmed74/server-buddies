@@ -34,7 +34,7 @@ export interface BuddyOptions {
   hang?: HangStyle;
   position?: Position;
   accessory?: Accessory;
-  /** Seasonal hat used when `accessory` is `auto`: Santa hat in December, witch hat Oct 20-31. Default `auto` follows the date (needs the `timeOfDay` action). */
+  /** Seasonal hat used when `accessory` is `auto`: Santa hat in December, witch hat or pumpkin (alternating by day) Oct 20-31. Default `auto` follows the date (needs the `timeOfDay` action). */
   season?: "auto" | "none" | "christmas" | "halloween";
   color?: string;
   colors?: BuddyColors;
