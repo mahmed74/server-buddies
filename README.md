@@ -71,7 +71,7 @@ Importing is SSR-safe; `createBuddy()` is a no-op on the server.
 | `hang` | `"rope"` | `rope`, `chain`, `spring`, `thread`, `balloon`, `none`. Each has its own physics |
 | `position` | `"top-right"` | `top-`/`bottom-` + `left`/`center`/`right`. Bottom positions perch (no tether) |
 | `season` | `"auto"` | `auto` (Santa hat in December, witch hat Oct 20-31, needs `timeOfDay`), `none`, `christmas`, `halloween` |
-| `accessory` | `"auto"` | `auto`, `none`, `nightcap`, `partyhat`, `crown`, `glasses`, `shades`, `headphones`, `santahat`, `witchhat` |
+| `accessory` | `"auto"` | `auto`, `none`, `nightcap`, `partyhat`, `crown`, `glasses`, `shades`, `headphones`, `santahat`, `witchhat`, `pumpkin` |
 | `color` | per character | Main body colour (hex); shades are derived |
 | `colors` | | Override `main`, `dark`, `light`, `shell`, `screen`, `balloon` individually |
 | `size` | `104` | Width in px (40-400) |
