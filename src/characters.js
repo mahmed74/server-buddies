@@ -160,7 +160,7 @@ export const CHARACTERS = {
 };
 
 export const CHARACTER_IDS = Object.keys(CHARACTERS);
-export const ACCESSORIES = ["auto", "none", "nightcap", "partyhat", "crown", "glasses", "shades", "headphones", "santahat", "pumpkin"];
+export const ACCESSORIES = ["auto", "none", "nightcap", "partyhat", "crown", "glasses", "shades", "headphones", "santahat", "witchhat"];
 
 // Accessories that sit on / around the head. `a` is the character anchor.
 export function accessoryOnHead(name, a) {
@@ -175,11 +175,11 @@ export function accessoryOnHead(name, a) {
       <rect x="54" y="${y - 3}" width="52" height="9" rx="4.5" fill="#f8fafc"/>
       <circle cx="112" cy="${y - 5}" r="6" fill="#f8fafc"/>`;
   }
-  if (name === "pumpkin") {
-    return `<ellipse cx="68" cy="${y - 4}" rx="11" ry="13" fill="#ea580c"/><ellipse cx="92" cy="${y - 4}" rx="11" ry="13" fill="#ea580c"/>
-      <ellipse cx="80" cy="${y - 4}" rx="11" ry="14" fill="#f97316"/>
-      <path d="M80 ${y - 17}V${y + 8}M72 ${y - 15}Q68 ${y - 4} 72 ${y + 6}M88 ${y - 15}Q92 ${y - 4} 88 ${y + 6}" stroke="#c2410c" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <path d="M80 ${y - 17}Q80 ${y - 26} 87 ${y - 27}" stroke="#15803d" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if (name === "witchhat") {
+    return `<ellipse cx="80" cy="${y + 1}" rx="40" ry="7" fill="#1e1b2e"/>
+      <path d="M62 ${y}Q66 ${y - 14} 74 ${y - 26}Q78 ${y - 36} 94 ${y - 40}Q86 ${y - 30} 90 ${y - 18}Q92 ${y - 8} 98 ${y}Z" fill="#2e2548"/>
+      <path d="M63 ${y - 3}Q80 ${y - 8} 97 ${y - 3}L98 ${y - 11}Q80 ${y - 16} 64 ${y - 11}Z" fill="#7c3aed"/>
+      <rect x="74" y="${y - 12}" width="12" height="10" rx="2" fill="none" stroke="#facc15" stroke-width="2.4"/>`;
   }
   if (name === "partyhat") {
     return `<path d="M63 ${y + 2}L80 ${y - 34}L97 ${y + 2}Z" fill="#f472b6"/>

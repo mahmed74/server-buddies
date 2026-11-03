@@ -1,7 +1,7 @@
 export type CharacterId = "server" | "robot" | "cat" | "ghost" | "cloud" | "database";
 export type HangStyle = "rope" | "chain" | "spring" | "thread" | "balloon" | "none";
 export type Position = "top-right" | "top-left" | "top-center" | "bottom-right" | "bottom-left" | "bottom-center";
-export type Accessory = "auto" | "none" | "nightcap" | "partyhat" | "crown" | "glasses" | "shades" | "headphones" | "santahat" | "pumpkin";
+export type Accessory = "auto" | "none" | "nightcap" | "partyhat" | "crown" | "glasses" | "shades" | "headphones" | "santahat" | "witchhat";
 export type Mood = "happy" | "curious" | "down";
 export type ActionName = "eyes" | "swing" | "drag" | "boop" | "combos" | "idle" | "sleep" | "hover" | "timeOfDay" | "effects";
 
@@ -34,7 +34,7 @@ export interface BuddyOptions {
   hang?: HangStyle;
   position?: Position;
   accessory?: Accessory;
-  /** Seasonal hat used when `accessory` is `auto`: Santa hat in December, pumpkin Oct 20-31. Default `auto` follows the date (needs the `timeOfDay` action). */
+  /** Seasonal hat used when `accessory` is `auto`: Santa hat in December, witch hat Oct 20-31. Default `auto` follows the date (needs the `timeOfDay` action). */
   season?: "auto" | "none" | "christmas" | "halloween";
   color?: string;
   colors?: BuddyColors;
