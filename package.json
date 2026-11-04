@@ -3,6 +3,8 @@
   "version": "0.1.7",
   "description": "Interactive animated mascots that hang from your website. 10 SVG characters, 6 tethers, a React component and a web component, zero dependencies.",
   "keywords": [
+    "server-buddies",
+    "server buddies",
     "mascot",
     "animated-mascot",
     "website-mascot",
