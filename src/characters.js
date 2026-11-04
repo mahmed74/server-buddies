@@ -282,6 +282,81 @@ export const CHARACTERS = {
       </g>
       <path d="M53 33Q57 29 62 29M89 33Q93 29 98 29" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".8"/>
       ${led(80, 15, 3.5, S.led)}`
+  },
+
+  penguin: {
+    id: "penguin",
+    name: "Penguin",
+    blurb: "Runs Linux. Will mention it.",
+    colors: { main: "#1e293b", shell: "#f8fafc", screen: "#0b1220" },
+    theme: BODY_FACE,
+    face: { dx: 0, dy: 3, k: 1 },
+    anchor: { y: 8, hw: 46, earY: 42 },
+    blush: true,
+    body: (S) => `
+      <ellipse cx="52" cy="104" rx="19" ry="7" fill="#f59e0b"/>
+      <ellipse cx="108" cy="104" rx="19" ry="7" fill="#f59e0b"/>
+      <path d="M36 52C20 60 16 82 26 94C34 88 40 70 42 58Z" ${D}/>
+      <path d="M124 52C140 60 144 82 134 94C126 88 120 70 118 58Z" ${D}/>
+      <ellipse cx="80" cy="58" rx="46" ry="50" ${M}/>
+      <ellipse cx="80" cy="40" rx="40" ry="23" ${SH}/>
+      <ellipse cx="80" cy="86" rx="29" ry="22" ${SH}/>
+      ${led(80, 90, 4, S.led)}`
+  },
+
+  terminal: {
+    id: "terminal",
+    name: "Terminal",
+    blurb: "A tiny shell with a blinking prompt.",
+    colors: { main: "#16a34a", shell: "#1e293b", screen: "#0b1220" },
+    theme: SCREEN_FACE,
+    face: { dx: 0, dy: 8, k: 1 },
+    anchor: { y: 10, hw: 62, earY: 44 },
+    body: (S) => `
+      <rect x="14" y="10" width="132" height="96" rx="11" ${M}/>
+      <circle cx="28" cy="19" r="3.4" fill="#fca5a5"/><circle cx="39" cy="19" r="3.4" fill="#fde68a"/><circle cx="50" cy="19" r="3.4" fill="#bbf7d0"/>
+      <rect x="20" y="28" width="120" height="72" rx="7" ${SC}/>
+      <text x="30" y="91" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" font-weight="700" fill="${S.led}">$ ssh buddy</text>
+      <rect class="sb-led" x="108" y="81" width="8" height="12" rx="1.5" fill="${S.led}"/>`
+  },
+
+  invader: {
+    id: "invader",
+    name: "Invader",
+    blurb: "Pixel-perfect arcade alien. Insert coin.",
+    colors: { main: "#22c55e", shell: "#1e293b", screen: "#0b1220" },
+    theme: SCREEN_FACE,
+    face: { dx: 0, dy: 20, k: 1 },
+    anchor: { y: 14, hw: 52, earY: 58 },
+    body: (S) => {
+      const rows = ["..#.....#..", "...#...#...", "..#######..", ".##.###.##.", "###########", "#.#######.#", "#.#.....#.#", "...##.##..."];
+      const px = rows
+        .map((r, y) => [...r].map((c, x) => (c === "#" ? `<rect x="${19 + x * 11}" y="${14 + y * 11}" width="11.5" height="11.5"/>` : "")).join(""))
+        .join("");
+      return `<g ${M}>${px}</g>
+      <rect x="41" y="44" width="78" height="30" rx="7" ${SC}/>
+      ${led(80, 40, 3, S.led)}`;
+    }
+  },
+
+  drone: {
+    id: "drone",
+    name: "Drone",
+    blurb: "Quadcopter with a camera for a face.",
+    colors: { main: "#f97316", shell: "#e2e8f0", screen: "#0b1220" },
+    theme: SCREEN_FACE,
+    face: { dx: 0, dy: 14, k: 1 },
+    anchor: { y: 36, hw: 46, earY: 60 },
+    body: (S) => `
+      <g style="stroke:var(--sb-dark)" stroke-width="5" stroke-linecap="round" fill="none">
+        <path d="M36 50L26 34M124 50L134 34M50 84L44 100M110 84L116 100"/>
+      </g>
+      <ellipse class="sb-led" cx="24" cy="29" rx="19" ry="4" ${L} opacity=".75"/>
+      <ellipse class="sb-led sb-led-c" cx="136" cy="29" rx="19" ry="4" ${L} opacity=".75"/>
+      <rect x="34" y="36" width="92" height="48" rx="22" ${SH}/>
+      <rect x="42" y="42" width="76" height="36" rx="16" ${SC}/>
+      <rect x="62" y="84" width="36" height="8" rx="4" ${M}/>
+      ${led(80, 88, 2.6, S.led)}`
   }
 };
 

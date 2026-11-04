@@ -8,7 +8,7 @@
 
 **Interactive animated mascots for your website** — 10 SVG characters that hang, swing, follow the cursor and react to your app. Works with plain HTML, React / Next.js and as a web component. Pick a character, choose how it hangs, switch behaviours on or off, and drop it in. Zero dependencies, framework-agnostic, ~12 kB gzipped.
 
-**Characters:** `server` · `robot` · `cat` · `ghost` · `cloud` · `database` · `router` · `shield` · `bug` · `container` · `rocket` · `octopus`
+**Characters:** `server` · `robot` · `cat` · `ghost` · `cloud` · `database` · `router` · `shield` · `bug` · `container` · `rocket` · `octopus` · `penguin` · `terminal` · `invader` · `drone`
 **Tethers:** `rope` · `chain` · `spring` · `thread` · `balloon` · `none` (perch)
 
 > Build yours visually with the configurator: run `npm run docs` in this repo (or deploy the `docs/` folder to GitHub Pages) and copy the generated snippet.
@@ -73,7 +73,7 @@ Importing is SSR-safe; `createBuddy()` is a no-op on the server.
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `character` | `"server"` | `server`, `robot`, `cat`, `ghost`, `cloud`, `database`, `router`, `shield`, `bug`, `container`, `rocket`, `octopus` |
+| `character` | `"server"` | `server`, `robot`, `cat`, `ghost`, `cloud`, `database`, `router`, `shield`, `bug`, `container`, `rocket`, `octopus`, `penguin`, `terminal`, `invader`, `drone` |
 | `hang` | `"rope"` | `rope`, `chain`, `spring`, `thread`, `balloon`, `none`. Each has its own physics |
 | `position` | `"top-right"` | `top-`/`bottom-` + `left`/`center`/`right`. Bottom positions perch (no tether) |
 | `season` | `"auto"` | `auto` (Santa hat in December, witch hat or pumpkin on alternate days Oct 20-31, needs `timeOfDay`), `none`, `christmas`, `halloween` |
