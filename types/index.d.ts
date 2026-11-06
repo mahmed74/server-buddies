@@ -1,4 +1,4 @@
-export type CharacterId = "server" | "robot" | "cat" | "ghost" | "cloud" | "database" | "router" | "shield" | "bug" | "container" | "rocket" | "octopus" | "penguin" | "terminal" | "invader" | "drone";
+export type CharacterId = "server" | "robot" | "cat" | "ghost" | "cloud" | "database" | "router" | "shield" | "bug" | "container" | "rocket" | "octopus" | "penguin" | "terminal" | "invader" | "drone" | "salesman";
 export type HangStyle = "rope" | "chain" | "spring" | "thread" | "balloon" | "none";
 export type Position = "top-right" | "top-left" | "top-center" | "bottom-right" | "bottom-left" | "bottom-center";
 export type Accessory = "auto" | "none" | "nightcap" | "partyhat" | "crown" | "glasses" | "shades" | "headphones" | "santahat" | "witchhat" | "pumpkin";
@@ -36,6 +36,10 @@ export interface BuddyOptions {
   accessory?: Accessory;
   /** Seasonal hat used when `accessory` is `auto`: Santa hat in December, witch hat or pumpkin (alternating by day) Oct 20-31. Default `auto` follows the date (needs the `timeOfDay` action). */
   season?: "auto" | "none" | "christmas" | "halloween";
+  /** Salesman only: headline on the sale board (max 8 chars). Default `SALE`. */
+  saleTitle?: string;
+  /** Salesman only: optional second line on the sale board (max 10 chars). Default none. */
+  saleDetail?: string;
   color?: string;
   colors?: BuddyColors;
   size?: number;
@@ -78,7 +82,7 @@ export interface BuddyHandle {
 export function createBuddy(options?: BuddyOptions): BuddyHandle;
 export function renderPreview(
   character: CharacterId,
-  options?: Pick<BuddyOptions, "color" | "colors" | "accessory"> & { state?: Mood }
+  options?: Pick<BuddyOptions, "color" | "colors" | "accessory" | "saleTitle" | "saleDetail"> & { state?: Mood }
 ): string;
 export function ensureStyles(): void;
 export function defineServerBuddyElement(tag?: string): void;

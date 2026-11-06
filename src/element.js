@@ -2,7 +2,7 @@ import { createBuddy } from "./core.js";
 
 const OBSERVED = [
   "character", "hang", "position", "accessory", "season", "color", "size", "length", "actions", "mood", "mount",
-  "watch-input", "look-at", "hide-below", "offset-x", "offset-y"
+  "watch-input", "look-at", "sale-title", "sale-detail", "hide-below", "offset-x", "offset-y"
 ];
 
 function optionsFromAttributes(el) {
@@ -24,6 +24,8 @@ function optionsFromAttributes(el) {
     mount: get("mount"),
     watchInput: get("watch-input"),
     lookAt: get("look-at"),
+    saleTitle: get("sale-title"),
+    saleDetail: get("sale-detail"),
     hideBelow: num(get("hide-below")),
     offset: ox !== undefined || oy !== undefined ? { ...(ox !== undefined && { x: ox }), ...(oy !== undefined && { y: oy }) } : undefined,
     actions: actions === undefined ? undefined : actions.split(",").map((s) => s.trim()).filter(Boolean)

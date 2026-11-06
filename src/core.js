@@ -170,7 +170,7 @@ export function renderPreview(character, options = {}) {
   const ch = CHARACTERS[character] || CHARACTERS.server;
   const o = resolveOptions({ ...options, character: ch.id });
   const p = buildPalette(ch, o);
-  const S = { state: options.state || "happy", eyesClosed: false, squint: false, idleAct: "", nervous: false, led: "#22c55e" };
+  const S = { saleTitle: o.saleTitle, saleDetail: o.saleDetail, state: options.state || "happy", eyesClosed: false, squint: false, idleAct: "", nervous: false, led: "#22c55e" };
   if (S.state === "down") S.led = "#ef4444";
   else if (S.state === "curious") S.led = "#f59e0b";
   // Previews are static (SSR-safe), so only an explicit season applies, never the current date.
@@ -344,6 +344,8 @@ function mountInstance(o) {
     const eyesClosed = state === "sleeping" || (S.idleAct === "yawn" && !isDown);
     const led = isDown ? "#ef4444" : state === "curious" ? "#f59e0b" : "#22c55e";
     const view = {
+      saleTitle: o.saleTitle,
+      saleDetail: o.saleDetail,
       state,
       eyesClosed,
       squint: S.squint,

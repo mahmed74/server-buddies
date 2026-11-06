@@ -33,6 +33,14 @@ const BODY_FACE = {
   cheek: "#fb7185"
 };
 
+// Salesman board text: user-supplied, so trim, cap the length and XML-escape it.
+const boardText = (v, fallback, max) => {
+  const t = typeof v === "string" && v.trim() ? v.trim().slice(0, max) : fallback;
+  if (!t) return "";
+  return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+};
+const boardFont = (t, base) => Math.min(base, Math.round((46 / Math.max(t.length, 1)) * 1.9 * 10) / 10);
+
 export const CHARACTERS = {
   server: {
     id: "server",
@@ -357,6 +365,36 @@ export const CHARACTERS = {
       <rect x="42" y="42" width="76" height="36" rx="16" ${SC}/>
       <rect x="62" y="84" width="36" height="8" rx="4" ${M}/>
       ${led(80, 88, 2.6, S.led)}`
+  },
+
+  salesman: {
+    id: "salesman",
+    name: "Salesman",
+    blurb: "Hawking a SALE board. Act now.",
+    colors: { main: "#2563eb", shell: "#fcd9b6", screen: "#0b1220" },
+    theme: BODY_FACE,
+    face: { dx: 0, dy: 7, k: 1 },
+    anchor: { y: 12, hw: 40, earY: 47 },
+    blush: true,
+    body: (S) => {
+      const title = boardText(S.saleTitle, "SALE", 8);
+      const detail = boardText(S.saleDetail, "", 10);
+      return `
+      <rect x="34" y="82" width="92" height="30" rx="15" ${M}/>
+      <path d="M62 82L80 106L98 82Z" fill="#f8fafc"/>
+      <path d="M76 84h8l3 17l-7 7l-7-7z" fill="#dc2626"/>
+      <circle cx="41" cy="48" r="7" ${SH}/><circle cx="119" cy="48" r="7" ${SH}/>
+      <ellipse cx="80" cy="46" rx="40" ry="35" ${SH}/>
+      <path d="M41 40C40 16 60 8 80 8C100 8 120 16 119 40C112 28 100 22 80 22C60 22 48 28 41 40Z" fill="#3b2417"/>
+      <g transform="rotate(5 124 88)">
+        <path d="M112 106L108 117M136 106L140 117" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+        <rect x="96" y="62" width="56" height="46" rx="6" fill="#dc2626" stroke="#fff" stroke-width="3"/>
+        <text x="124" y="${detail ? 81 : 92}" text-anchor="middle" font-family="system-ui,sans-serif" font-size="${boardFont(title, detail ? 15 : 19)}" font-weight="900" fill="#fff">${title}</text>
+        ${detail ? `<text x="124" y="99" text-anchor="middle" font-family="system-ui,sans-serif" font-size="${boardFont(detail, 13)}" font-weight="900" fill="#fde047">${detail}</text>` : ""}
+        ${led(146, 68, 2.6, S.led)}
+      </g>
+      <circle cx="96" cy="96" r="6.5" ${SH}/>`;
+    }
   }
 };
 
