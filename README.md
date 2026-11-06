@@ -6,7 +6,7 @@
 
 ![Server Buddies hanging around](https://raw.githubusercontent.com/mahmed74/server-buddies/master/docs/assets/demo.gif)
 
-**Interactive animated mascots for your website** — 10 SVG characters that hang, swing, follow the cursor and react to your app. Works with plain HTML, React / Next.js and as a web component. Pick a character, choose how it hangs, switch behaviours on or off, and drop it in. Zero dependencies, framework-agnostic, ~12 kB gzipped.
+**Interactive animated mascots for your website** — 17 SVG characters that hang, swing, follow the cursor and react to your app. Works with plain HTML, React / Next.js and as a web component. Pick a character, choose how it hangs, switch behaviours on or off, and drop it in. Zero dependencies, framework-agnostic, ~12 kB gzipped.
 
 **Characters:** `server` · `robot` · `cat` · `ghost` · `cloud` · `database` · `router` · `shield` · `bug` · `container` · `rocket` · `octopus` · `penguin` · `terminal` · `invader` · `drone` · `salesman`
 **Tethers:** `rope` · `chain` · `spring` · `thread` · `balloon` · `none` (perch)
