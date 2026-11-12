@@ -126,6 +126,86 @@ function marineFace(ch, S, acc) {
   return `<g>${g}</g><g transform="translate(0 23)">${accessoryOnFace(acc)}</g>`;
 }
 
+// Brawler: bare-headed and permanently furious. Headband and tank top follow --sb-main.
+const BRAWLER_PAL = {
+  k: "#16120f",
+  l: MARINE_PAL.l,
+  H: M,
+  h: D,
+  n: "#2b1e15",
+  m: "#4a3627",
+  q: "#18110c",
+  v: "#ef4444",
+  V: "#b91c1c",
+  w: "#c9b48e",
+  W: "#e6d6b4",
+  1: "#5a2d1c",
+  2: "#8e4d31",
+  3: "#c27d52",
+  4: "#e0a271",
+  5: "#f5c99a"
+};
+const BRAWLER_ROWS = [
+  "..................................",
+  "..........kkkkkkkkkkkkkk..........",
+  ".......kkknmmmmmmmnnnnqqkkk.......",
+  "......knnnmmmmmmmmnnnvnvqqqk......",
+  ".....knnnmmmmmmmmmnnvvnvvqqqk.....",
+  ".....knnnnnnnnnnnnnnnnnnnqqqk.....",
+  ".....knnnnnnnnnnnnnnVVnVVqqqk.....",
+  "....knnnnnnnnnnnnnnnnVnVnqqqqk....",
+  "....knnnnnnnnnnnnnnnnnnnnqqqqk....",
+  "....klllHHHHHHHHHHHHHHHHHhhhhkk...",
+  "....kHHHHHhhhhhhhhhhhhhhhhhhhhHk..",
+  "....knn44443333333333332222qqhHhk.",
+  "....knn44422222333322222222qqkkHhk",
+  "...k3nn44442222333322222222qq1kkk.",
+  "...k42n44442222342322222222q12k...",
+  "...k42444542223WWww32222222112k...",
+  "...k34444543333342333332222111k...",
+  "....kk4444433333523333322211kk....",
+  ".....k4444433332431333322211k.....",
+  ".....k4444433333113333322211k.....",
+  ".....k4444433333333333222211k.....",
+  "......k11143333333333322111k......",
+  ".......k114433333333332211k.......",
+  "........k1143333333332211k........",
+  "....kkkkkk11433321332211kkkkkk....",
+  ".kkk44444HHH1111111111hhh22222kkk.",
+  "k44444444HHH2222222222hhh22222222k",
+  "k44444444HHHHHHHHhhhhhhhh22222222k"
+];
+
+// Angry brows for each eye: thick, slanting down to the nose and over the inner corner of the eye.
+const BROW_L = [[10, 11], [11, 11], [11, 12], [12, 12], [13, 12], [13, 13], [14, 13]];
+const BROW_R = BROW_L.map(([c, r]) => [33 - c, r]);
+
+function brawlerFace(ch, S, acc) {
+  const down = S.state === "down";
+  const closed = S.eyesClosed;
+  const squint = S.squint && !down && !closed;
+  const curious = S.state === "curious";
+  const ink = "#1c0e08";
+  const red = "#ef4444";
+  let g = "";
+  for (const c of [11, 20]) {
+    if (down) g += cell(c, 12, red) + cell(c + 2, 12, red) + cell(c + 1, 13, red) + cell(c, 14, red) + cell(c + 2, 14, red);
+    else if (closed) g += cell(c, 14, ink, 3);
+    else if (squint) g += cell(c, 14, "#fbf6ec", 3) + cell(c + 1, 14, "#120d0a");
+    else g += cell(c, 13, "#e3d8c4", 3) + cell(c, 14, "#fbf6ec", 3);
+  }
+  if (!down && !closed && !squint) g += `<g class="sb-pupils">${[12, 21].map((c) => cell(c, 13, "#120d0a") + cell(c, 14, "#4f8a4a")).join("")}</g>`;
+  const brows = down ? [] : curious ? [...BROW_L, [20, 11], [21, 11], [22, 11], [23, 11]] : [...BROW_L, ...BROW_R];
+  g += brows.map(([c, r]) => cell(c, r, ink)).join("");
+
+  if (down) g += cell(13, 20, ink, 8, 4) + cell(14, 21, "#f6f1e6", 6) + cell(14, 22, "#6b1111", 6); // yelling
+  else if (S.idleAct === "yawn") g += cell(15, 20, ink, 4, 3) + cell(16, 21, "#6b1111", 2);
+  else if (S.state === "sleeping" || curious) g += cell(14, 21, ink, 6);
+  else g += cell(13, 20, ink, 8, 3) + cell(14, 21, "#f6f1e6", 6) + cell(16, 21, "#b8ae9c") + cell(18, 21, "#b8ae9c"); // gritted teeth
+
+  return `<g>${g}</g><g transform="translate(0 23)">${accessoryOnFace(acc)}</g>`;
+}
+
 export const CHARACTERS = {
   server: {
     id: "server",
@@ -492,6 +572,18 @@ export const CHARACTERS = {
     faceMarkup: marineFace,
     anchor: { y: 10, hw: 56, earY: 50 },
     body: (S) => `${pixelArt(MARINE_ROWS, MARINE_PAL)}${led(80, 36, 3.2, S.led)}`
+  },
+
+  brawler: {
+    id: "brawler",
+    name: "Brawler",
+    blurb: "Permanently furious pixel bruiser. Page him at your own risk.",
+    colors: { main: "#b91c1c", shell: "#1e293b", screen: "#0b1220" },
+    theme: BODY_FACE,
+    face: { dx: 0, dy: 23, k: 1 },
+    faceMarkup: brawlerFace,
+    anchor: { y: 8, hw: 50, earY: 58 },
+    body: (S) => `${pixelArt(BRAWLER_ROWS, BRAWLER_PAL)}${led(80, 41, 3, S.led)}`
   }
 };
 
