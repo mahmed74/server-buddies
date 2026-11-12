@@ -41,6 +41,171 @@ const boardText = (v, fallback, max) => {
 };
 const boardFont = (t, base) => Math.min(base, Math.round((46 / Math.max(t.length, 1)) * 1.9 * 10) / 10);
 
+// Pixel art: rows of palette keys on a 4-unit grid from (12, 2); runs of one colour become one rect.
+const PX = 4, PX0 = 12, PY0 = 2;
+const cell = (c, r, fill, w = 1, h = 1) =>
+  `<rect x="${PX0 + c * PX}" y="${PY0 + r * PX}" width="${w * PX + 1}" height="${h * PX + 1}" ${fill.startsWith("style") ? fill : `fill="${fill}"`}/>`;
+const pixelArt = (rows, pal) =>
+  rows
+    .map((row, r) => row.replace(/([^.])\1*/g, (run, k, c) => cell(c, r, pal[k], run.length)))
+    .join("");
+
+// Marine palette: the helmet and armour follow --sb-main, skin is a fixed five-step ramp lit from the top left.
+const MARINE_PAL = {
+  k: "#16120f",
+  l: 'style="fill:color-mix(in srgb,var(--sb-main) 70%,#fff)"',
+  H: M,
+  h: D,
+  g: 'style="fill:color-mix(in srgb,var(--sb-dark) 65%,#000)"',
+  s: "#2a241d",
+  1: "#4a2616",
+  2: "#7a4026",
+  3: "#a65f35",
+  4: "#cf8550",
+  5: "#eeb27a",
+  b: "#8f5230",
+  r: "#e2a087"
+};
+const MARINE_ROWS = [
+  "...........kkkkkkkkkkkk...........",
+  ".........kklllllllHHHhgkk.........",
+  ".......kkllllllllllHHHhhgkk.......",
+  "......kHHllllllHHHHHHHHhhggk......",
+  ".....kHHllllllHHHHHHHHHHhhggk.....",
+  "....kHHHllllllHHHHHHHHHHhhhggk....",
+  "....kHHHHHHHHHHHHHHHHHHHHhhhgk....",
+  "...kHHHHHHHHHHHHHHHHHHHHHhhhggk...",
+  "...ksssssssssssssssssssssgggggk...",
+  "...kHHHHHHHHHHHHHHHHHHHHHhhhhgk...",
+  "..khhhhhhhhhhhhhhhhhhhhhhhhhhggk..",
+  ".khhhhhhhhhhhhhhhhhhhhhhhhggggggk.",
+  "..kkk2s22211111222211r11111s1kkk..",
+  "....k4s44422221332312222222s1k....",
+  "....k4s44442223342332222222s1k....",
+  "....k4s445432233523322r2222s1k....",
+  "....k4s444533333523333r2222s1k....",
+  ".....ks44443333342333332221sk.....",
+  ".....ks44443333122133332221sk.....",
+  ".....k4s444333bbbbbb332222s1k.....",
+  "......ks333bbbbbbbbbbb2222sk......",
+  "......k43333bbbbbbbbbb22211k......",
+  ".......k1113bbb333bbbb2111k.......",
+  "........k1133bbb2bbbb2211k........",
+  "...kkkkkkk11422222222211kkkkkkk...",
+  ".kklllllllllk11111111kHHHHHHHHHkk.",
+  "kHHHHHHHHHHHk22222222kHHHHHhhhhhhk",
+  "kHHHHHHHHHHHk22222222kHHHHHhhhhhhk"
+];
+
+// The marine's own pixel face: same states as the shared face, eyes at the shared eye positions.
+function marineFace(ch, S, acc) {
+  const t = ch.theme;
+  const down = S.state === "down";
+  const closed = S.eyesClosed;
+  const squint = S.squint && !down && !closed;
+  const curious = S.state === "curious";
+  const ink = "#2a150c";
+  let g = "";
+  for (const c of [11, 20]) {
+    if (down) g += cell(c, 12, t.down) + cell(c + 2, 12, t.down) + cell(c + 1, 13, t.down) + cell(c, 14, t.down) + cell(c + 2, 14, t.down);
+    else if (closed) g += cell(c, 14, ink, 3);
+    else if (squint) g += cell(c, 14, ink) + cell(c + 1, 13, ink) + cell(c + 2, 14, ink);
+    else g += cell(c, curious ? 12 : 13, "#e3d8c4", 3) + cell(c, curious ? 13 : 14, "#fbf6ec", 3, curious ? 2 : 1);
+  }
+  if (!down && !closed && !squint) {
+    const top = curious ? 12 : 13;
+    g += `<g class="sb-pupils">${[12, 21].map((c) => cell(c, top, "#120d0a") + cell(c, top + 1, "#3b5f7a", 1, curious ? 2 : 1)).join("")}</g>`;
+  }
+
+  if (down) g += cell(15, 21, ink, 4) + cell(14, 22, ink) + cell(19, 22, ink);
+  else if (S.idleAct === "yawn") g += cell(16, 20, ink, 2, 3);
+  else if (S.state === "sleeping") g += cell(15, 21, ink, 4);
+  else if (curious) g += cell(16, 21, ink, 2, 2);
+  else g += cell(14, 21, ink, 4) + cell(18, 20, ink); // the smirk
+
+  return `<g>${g}</g><g transform="translate(0 23)">${accessoryOnFace(acc)}</g>`;
+}
+
+// Brawler: bare-headed and permanently furious. Headband and tank top follow --sb-main.
+const BRAWLER_PAL = {
+  k: "#16120f",
+  l: MARINE_PAL.l,
+  H: M,
+  h: D,
+  n: "#2b1e15",
+  m: "#4a3627",
+  q: "#18110c",
+  v: "#ef4444",
+  V: "#b91c1c",
+  w: "#c9b48e",
+  W: "#e6d6b4",
+  1: "#5a2d1c",
+  2: "#8e4d31",
+  3: "#c27d52",
+  4: "#e0a271",
+  5: "#f5c99a"
+};
+const BRAWLER_ROWS = [
+  "..................................",
+  "..........kkkkkkkkkkkkkk..........",
+  ".......kkknmmmmmmmnnnnqqkkk.......",
+  "......knnnmmmmmmmmnnnvnvqqqk......",
+  ".....knnnmmmmmmmmmnnvvnvvqqqk.....",
+  ".....knnnnnnnnnnnnnnnnnnnqqqk.....",
+  ".....knnnnnnnnnnnnnnVVnVVqqqk.....",
+  "....knnnnnnnnnnnnnnnnVnVnqqqqk....",
+  "....knnnnnnnnnnnnnnnnnnnnqqqqk....",
+  "....klllHHHHHHHHHHHHHHHHHhhhhkk...",
+  "....kHHHHHhhhhhhhhhhhhhhhhhhhhHk..",
+  "....knn44443333333333332222qqhHhk.",
+  "....knn44422222333322222222qqkkHhk",
+  "...k3nn44442222333322222222qq1kkk.",
+  "...k42n44442222342322222222q12k...",
+  "...k42444542223WWww32222222112k...",
+  "...k34444543333342333332222111k...",
+  "....kk4444433333523333322211kk....",
+  ".....k4444433332431333322211k.....",
+  ".....k4444433333113333322211k.....",
+  ".....k4444433333333333222211k.....",
+  "......k11143333333333322111k......",
+  ".......k114433333333332211k.......",
+  "........k1143333333332211k........",
+  "....kkkkkk11433321332211kkkkkk....",
+  ".kkk44444HHH1111111111hhh22222kkk.",
+  "k44444444HHH2222222222hhh22222222k",
+  "k44444444HHHHHHHHhhhhhhhh22222222k"
+];
+
+// Angry brows for each eye: thick, slanting down to the nose and over the inner corner of the eye.
+const BROW_L = [[10, 11], [11, 11], [11, 12], [12, 12], [13, 12], [13, 13], [14, 13]];
+const BROW_R = BROW_L.map(([c, r]) => [33 - c, r]);
+
+function brawlerFace(ch, S, acc) {
+  const down = S.state === "down";
+  const closed = S.eyesClosed;
+  const squint = S.squint && !down && !closed;
+  const curious = S.state === "curious";
+  const ink = "#1c0e08";
+  const red = "#ef4444";
+  let g = "";
+  for (const c of [11, 20]) {
+    if (down) g += cell(c, 12, red) + cell(c + 2, 12, red) + cell(c + 1, 13, red) + cell(c, 14, red) + cell(c + 2, 14, red);
+    else if (closed) g += cell(c, 14, ink, 3);
+    else if (squint) g += cell(c, 14, "#fbf6ec", 3) + cell(c + 1, 14, "#120d0a");
+    else g += cell(c, 13, "#e3d8c4", 3) + cell(c, 14, "#fbf6ec", 3);
+  }
+  if (!down && !closed && !squint) g += `<g class="sb-pupils">${[12, 21].map((c) => cell(c, 13, "#120d0a") + cell(c, 14, "#4f8a4a")).join("")}</g>`;
+  const brows = down ? [] : curious ? [...BROW_L, [20, 11], [21, 11], [22, 11], [23, 11]] : [...BROW_L, ...BROW_R];
+  g += brows.map(([c, r]) => cell(c, r, ink)).join("");
+
+  if (down) g += cell(13, 20, ink, 8, 4) + cell(14, 21, "#f6f1e6", 6) + cell(14, 22, "#6b1111", 6); // yelling
+  else if (S.idleAct === "yawn") g += cell(15, 20, ink, 4, 3) + cell(16, 21, "#6b1111", 2);
+  else if (S.state === "sleeping" || curious) g += cell(14, 21, ink, 6);
+  else g += cell(13, 20, ink, 8, 3) + cell(14, 21, "#f6f1e6", 6) + cell(16, 21, "#b8ae9c") + cell(18, 21, "#b8ae9c"); // gritted teeth
+
+  return `<g>${g}</g><g transform="translate(0 23)">${accessoryOnFace(acc)}</g>`;
+}
+
 export const CHARACTERS = {
   server: {
     id: "server",
@@ -395,6 +560,30 @@ export const CHARACTERS = {
       </g>
       <circle cx="96" cy="96" r="6.5" ${SH}/>`;
     }
+  },
+
+  marine: {
+    id: "marine",
+    name: "Marine",
+    blurb: "Battle-scarred pixel grunt. Holds the line at 3am.",
+    colors: { main: "#5b6b2e", shell: "#1e293b", screen: "#0b1220" },
+    theme: { ...BODY_FACE, down: "#ef4444" },
+    face: { dx: 0, dy: 23, k: 1 },
+    faceMarkup: marineFace,
+    anchor: { y: 10, hw: 56, earY: 50 },
+    body: (S) => `${pixelArt(MARINE_ROWS, MARINE_PAL)}${led(80, 36, 3.2, S.led)}`
+  },
+
+  brawler: {
+    id: "brawler",
+    name: "Brawler",
+    blurb: "Permanently furious pixel bruiser. Page him at your own risk.",
+    colors: { main: "#b91c1c", shell: "#1e293b", screen: "#0b1220" },
+    theme: BODY_FACE,
+    face: { dx: 0, dy: 23, k: 1 },
+    faceMarkup: brawlerFace,
+    anchor: { y: 8, hw: 50, earY: 58 },
+    body: (S) => `${pixelArt(BRAWLER_ROWS, BRAWLER_PAL)}${led(80, 41, 3, S.led)}`
   }
 };
 
@@ -510,7 +699,7 @@ export function faceMarkup(ch, S, acc) {
 
 // Full <svg> inner markup for a character in a given state.
 export function characterMarkup(ch, S, acc) {
-  const parts = [`<g class="sb-body">`, ch.body(S), faceMarkup(ch, S, acc), accessoryOnHead(acc, ch.anchor), `</g>`];
+  const parts = [`<g class="sb-body">`, ch.body(S), (ch.faceMarkup || faceMarkup)(ch, S, acc), accessoryOnHead(acc, ch.anchor), `</g>`];
 
   if (S.state === "down" || S.nervous) {
     parts.push(`<path class="sb-sweat" d="M138 20q5 8 0 12q-5-4 0-12z" fill="#7dd3fc"/>`);
