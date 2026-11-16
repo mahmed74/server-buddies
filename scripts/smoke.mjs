@@ -12,7 +12,7 @@ const reactCjs = require("../dist/react.cjs");
 
 for (const lib of [esm, cjs]) {
   assert.equal(typeof lib.createBuddy, "function");
-  assert.equal(lib.characters.length, 18);
+  assert.equal(lib.characters.length, 19);
   // Without a DOM, createBuddy is a safe no-op
   const b = lib.createBuddy({ character: "robot" });
   b.say("hi");
