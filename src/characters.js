@@ -41,6 +41,91 @@ const boardText = (v, fallback, max) => {
 };
 const boardFont = (t, base) => Math.min(base, Math.round((46 / Math.max(t.length, 1)) * 1.9 * 10) / 10);
 
+// Pixel art: rows of palette keys on a 4-unit grid from (12, 2); runs of one colour become one rect.
+const PX = 4, PX0 = 12, PY0 = 2;
+const cell = (c, r, fill, w = 1, h = 1) =>
+  `<rect x="${PX0 + c * PX}" y="${PY0 + r * PX}" width="${w * PX + 1}" height="${h * PX + 1}" ${fill.startsWith("style") ? fill : `fill="${fill}"`}/>`;
+const pixelArt = (rows, pal) =>
+  rows
+    .map((row, r) => row.replace(/([^.])\1*/g, (run, k, c) => cell(c, r, pal[k], run.length)))
+    .join("");
+
+// Marine palette: the helmet and armour follow --sb-main, skin is a fixed five-step ramp lit from the top left.
+const MARINE_PAL = {
+  k: "#16120f",
+  l: 'style="fill:color-mix(in srgb,var(--sb-main) 70%,#fff)"',
+  H: M,
+  h: D,
+  g: 'style="fill:color-mix(in srgb,var(--sb-dark) 65%,#000)"',
+  s: "#2a241d",
+  1: "#4a2616",
+  2: "#7a4026",
+  3: "#a65f35",
+  4: "#cf8550",
+  5: "#eeb27a",
+  b: "#8f5230",
+  r: "#e2a087"
+};
+const MARINE_ROWS = [
+  "...........kkkkkkkkkkkk...........",
+  ".........kklllllllHHHhgkk.........",
+  ".......kkllllllllllHHHhhgkk.......",
+  "......kHHllllllHHHHHHHHhhggk......",
+  ".....kHHllllllHHHHHHHHHHhhggk.....",
+  "....kHHHllllllHHHHHHHHHHhhhggk....",
+  "....kHHHHHHHHHHHHHHHHHHHHhhhgk....",
+  "...kHHHHHHHHHHHHHHHHHHHHHhhhggk...",
+  "...ksssssssssssssssssssssgggggk...",
+  "...kHHHHHHHHHHHHHHHHHHHHHhhhhgk...",
+  "..khhhhhhhhhhhhhhhhhhhhhhhhhhggk..",
+  ".khhhhhhhhhhhhhhhhhhhhhhhhggggggk.",
+  "..kkk2s22211111222211r11111s1kkk..",
+  "....k4s44422221332312222222s1k....",
+  "....k4s44442223342332222222s1k....",
+  "....k4s445432233523322r2222s1k....",
+  "....k4s444533333523333r2222s1k....",
+  ".....ks44443333342333332221sk.....",
+  ".....ks44443333122133332221sk.....",
+  ".....k4s444333bbbbbb332222s1k.....",
+  "......ks333bbbbbbbbbbb2222sk......",
+  "......k43333bbbbbbbbbb22211k......",
+  ".......k1113bbb333bbbb2111k.......",
+  "........k1133bbb2bbbb2211k........",
+  "...kkkkkkk11422222222211kkkkkkk...",
+  ".kklllllllllk11111111kHHHHHHHHHkk.",
+  "kHHHHHHHHHHHk22222222kHHHHHhhhhhhk",
+  "kHHHHHHHHHHHk22222222kHHHHHhhhhhhk"
+];
+
+// The marine's own pixel face: same states as the shared face, eyes at the shared eye positions.
+function marineFace(ch, S, acc) {
+  const t = ch.theme;
+  const down = S.state === "down";
+  const closed = S.eyesClosed;
+  const squint = S.squint && !down && !closed;
+  const curious = S.state === "curious";
+  const ink = "#2a150c";
+  let g = "";
+  for (const c of [11, 20]) {
+    if (down) g += cell(c, 12, t.down) + cell(c + 2, 12, t.down) + cell(c + 1, 13, t.down) + cell(c, 14, t.down) + cell(c + 2, 14, t.down);
+    else if (closed) g += cell(c, 14, ink, 3);
+    else if (squint) g += cell(c, 14, ink) + cell(c + 1, 13, ink) + cell(c + 2, 14, ink);
+    else g += cell(c, curious ? 12 : 13, "#e3d8c4", 3) + cell(c, curious ? 13 : 14, "#fbf6ec", 3, curious ? 2 : 1);
+  }
+  if (!down && !closed && !squint) {
+    const top = curious ? 12 : 13;
+    g += `<g class="sb-pupils">${[12, 21].map((c) => cell(c, top, "#120d0a") + cell(c, top + 1, "#3b5f7a", 1, curious ? 2 : 1)).join("")}</g>`;
+  }
+
+  if (down) g += cell(15, 21, ink, 4) + cell(14, 22, ink) + cell(19, 22, ink);
+  else if (S.idleAct === "yawn") g += cell(16, 20, ink, 2, 3);
+  else if (S.state === "sleeping") g += cell(15, 21, ink, 4);
+  else if (curious) g += cell(16, 21, ink, 2, 2);
+  else g += cell(14, 21, ink, 4) + cell(18, 20, ink); // the smirk
+
+  return `<g>${g}</g><g transform="translate(0 23)">${accessoryOnFace(acc)}</g>`;
+}
+
 export const CHARACTERS = {
   server: {
     id: "server",
@@ -395,6 +480,18 @@ export const CHARACTERS = {
       </g>
       <circle cx="96" cy="96" r="6.5" ${SH}/>`;
     }
+  },
+
+  marine: {
+    id: "marine",
+    name: "Marine",
+    blurb: "Battle-scarred pixel grunt. Holds the line at 3am.",
+    colors: { main: "#5b6b2e", shell: "#1e293b", screen: "#0b1220" },
+    theme: { ...BODY_FACE, down: "#ef4444" },
+    face: { dx: 0, dy: 23, k: 1 },
+    faceMarkup: marineFace,
+    anchor: { y: 10, hw: 56, earY: 50 },
+    body: (S) => `${pixelArt(MARINE_ROWS, MARINE_PAL)}${led(80, 36, 3.2, S.led)}`
   }
 };
 
@@ -510,7 +607,7 @@ export function faceMarkup(ch, S, acc) {
 
 // Full <svg> inner markup for a character in a given state.
 export function characterMarkup(ch, S, acc) {
-  const parts = [`<g class="sb-body">`, ch.body(S), faceMarkup(ch, S, acc), accessoryOnHead(acc, ch.anchor), `</g>`];
+  const parts = [`<g class="sb-body">`, ch.body(S), (ch.faceMarkup || faceMarkup)(ch, S, acc), accessoryOnHead(acc, ch.anchor), `</g>`];
 
   if (S.state === "down" || S.nervous) {
     parts.push(`<path class="sb-sweat" d="M138 20q5 8 0 12q-5-4 0-12z" fill="#7dd3fc"/>`);
